@@ -129,3 +129,5 @@ const pricingRules =[{
 
  basket.total();
  console.log(basket.total());
+
+ module.exports = Basket
