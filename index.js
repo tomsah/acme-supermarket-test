@@ -43,6 +43,7 @@ const pricingRules =[{
      //discounted amount to apply for 3+bulk promocode product
      const discountedAmount = 0.5;
 
+
      this.orderedProducts.forEach(orderedProduct => {
        if(productsQuantity[orderedProduct] === undefined) {
          productsQuantity[orderedProduct] = 1;
@@ -51,35 +52,46 @@ const pricingRules =[{
        }
      });
 
+
+
      pricingRules.map( productDetails => {
+
        return Object.keys(productDetails).forEach(function (key) {
+
+
 
          //short hand to access the different product object;
          const product = productDetails[key];
 
          /*check promocode and quantity to calculate
          the correct price of each orderd product */
-         if(product.promoCode === "buy-one-get-one-free") {
-           if(productsQuantity[product.ref] % 2 === 0) {
-             productsPrice.push((product.price / 2) * productsQuantity[product.ref]);
-           } else {
+
+         if( productsQuantity[product.ref]) {
+           if(product.promoCode === "buy-one-get-one-free") {
+             if(productsQuantity[product.ref] % 2 === 0) {
+               productsPrice.push((product.price / 2) * productsQuantity[product.ref]);
+             } else {
+               productsPrice.push(productsQuantity[product.ref] * (product.price));
+             }
+           }
+
+           if(product.promoCode === '3+bulk') {
+             if(productsQuantity[product.ref] >= 3) {
+               productsPrice.push(productsQuantity[product.ref] * (product.price - discountedAmount))
+             } else {
+               productsPrice.push(productsQuantity[product.ref] * (product.price));
+             }
+           }
+
+           if(product.promoCode === 'none') {
              productsPrice.push(productsQuantity[product.ref] * (product.price));
            }
-         }
-
-         if(product.promoCode === '3+bulk') {
-           if(productsQuantity[product.ref] >= 3) {
-             productsPrice.push(productsQuantity[product.ref] * (product.price - discountedAmount))
-           } else {
-             productsPrice.push(productsQuantity[product.ref] * (product.price));
-           }
-         }
-
-         if(product.promoCode === 'none') {
-           productsPrice.push(productsQuantity[product.ref] * (product.price));
-         }
+        }
        });
      })
+
+      // console.log(productsPrice);
+
 
      //Get the total of the product prices
      const totalPrice = productsPrice.reduce((sum, nextValue) => {
